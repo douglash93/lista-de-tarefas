@@ -7,13 +7,14 @@ let janelaEdicaoBtnFechar = document.querySelector('#janelaEdicaoBtnFechar');
 let btnAtualizarTarefa = document.querySelector('#btnAtualizarTarefa');
 let idTarefaEdicao = document.querySelector('#idTarefaEdicao');
 let inputTarefaNomeEdicao = document.querySelector('#inputTarefaNomeEdicao');
+const qtdIdsDisponiveis = Number.MAX_VALUE;
 
 inputNovaTarefa.addEventListener('keypress', (e) => {
 
     if(e.keyCode == 13) {
         let tarefa = {
             nome: inputNovaTarefa.value,
-            id: gerarId(),
+            id: gerarIdV2(),
         }
         adicionarTarefa(tarefa);
     }
@@ -27,7 +28,7 @@ btnAddTarefa.addEventListener('click', (e) => {
 
     let tarefa = {
         nome: inputNovaTarefa.value,
-        id: gerarId(),
+        id: gerarIdV2(),
     }
     adicionarTarefa(tarefa);
 });
@@ -54,7 +55,38 @@ btnAtualizarTarefa.addEventListener('click', (e) => {
 });
 
 function gerarId() {
-    return Math.floor(Math.random() * 3000);
+    return Math.floor(Math.random() * qtdIdsDisponiveis);
+}
+
+function gerarIdV2() {
+    return gerarIdUnico();
+}
+
+function gerarIdUnico() {
+
+    // debugger;
+    let itensDaLista = document.querySelector('#listaTarefas').children;
+    let idsGerados = [];
+
+    for(let i=0;i<itensDaLista.length;i++) {
+        idsGerados.push(itensDaLista[i].id);
+    }
+
+    let contadorIds = 0;
+    let id = gerarId();
+
+    while(contadorIds <= qtdIdsDisponiveis && 
+        idsGerados.indexOf(id.toString()) > -1) {
+            id = gerarId();
+            contadorIds++;
+
+            if(contadorIds >= qtdIdsDisponiveis) {
+                alert("Oops, ficamos sem IDS :/");
+                throw new Error("Acabou os IDs :/");
+            }
+        }
+
+    return id;
 }
 
 function adicionarTarefa(tarefa) {
